@@ -27,8 +27,8 @@ function AskingForm() {
          <label className="form-label">
               Would you like to add expense to groupmembers or to friendslist?
               </label>
-            <button className="btn btn-primary mt-3" onClick={handleb1} style={{width:'160px'}}>Groups</button>
-            <button className="btn btn-primary mt-3" onClick={handleb2} style={{width:'160px'}}>Friends</button>
+            <button className="btn btn-primary mt-3" onClick={handleb1} style={{marginLeft:'80px',padding:'7px',fontSize:'18px',width:'150px'}}>Groups</button>
+            <button className="btn btn-primary mt-3" onClick={handleb2} style={{marginLeft:'80px',padding:'7px',fontSize:'18px',width:'150px'}}>Friends</button>
     </div>
   )
 }

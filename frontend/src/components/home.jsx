@@ -35,6 +35,11 @@ function Home(props)
      {
       navigate('/activity');
      }
+
+     const nav3 = () =>
+     {
+       navigate('/payments')
+     }
     return(
     <div>
 
@@ -105,7 +110,7 @@ function Home(props)
     <Card.Text>
       Here you can manage Account and view actions
     </Card.Text>
-    <Button variant="primary">Account</Button>
+    <Button variant="primary" onClick={nav3}>Account</Button>
   </Card.Body>
 </Card>
 </Col>

@@ -95,7 +95,7 @@ function Groups(props)
   })}
   </div>
 
-<button className="btn btn-primary mt-3" type="submit">
+<button className="btn btn-primary mt-3" type="submit" style={{marginLeft:'80px',padding:'7px',fontSize:'18px',width:'150px'}}>
 Create Group
 </button>
 </form>

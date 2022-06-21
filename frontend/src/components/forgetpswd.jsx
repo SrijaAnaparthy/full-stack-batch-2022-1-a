@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 export default function Forgotpassword()
 {
+  const BE_HOST= "https://breakthepriceapp-backend.herokuapp.com"
      const formik = useFormik({
         initialValues:
         {
@@ -24,7 +25,7 @@ export default function Forgotpassword()
       function submitdata(values)
       {
           console.log(values)   
-          fetch('http://localhost:1000/usertest',{
+          fetch(`${BE_HOST}/usertest`,{
             method:"POST",
             body:JSON.stringify(values),
             headers:
@@ -47,24 +48,24 @@ export default function Forgotpassword()
       }
 
     return(<div>
-        <div>
+        <div  className="card m-5 p-5 mx-auto sh" style={{ width: '600px' }}>
             <h3>Forgot Password</h3><br/>
 
             <form onSubmit={formik.handleSubmit}>
-            <label>
+            <label className="form-label">
             Enter your mail here...
             </label>
 
             <input id="email" type='text'
                {...formik.getFieldProps('email')}
-                ></input>
+               className="form-control" ></input>
 
              {formik.touched.email && formik.errors.email ? (
           <div style={{ color: 'red' }}>{formik.errors.email}</div>
         ) : null}
 
           <br/>
-          <button type="submit">Continue</button>
+          <button type="submit" className="btn btn-primary mt-3" style={{marginLeft:'150px',padding:'10px',fontSize:'25px',width:'150px'}}>Continue</button>
           </form>
           </div>
     </div>

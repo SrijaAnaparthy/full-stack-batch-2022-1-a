@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import {Link,useNavigate} from 'react-router-dom'
 export default function Otppage()
 {
+  const BE_HOST= "https://breakthepriceapp-backend.herokuapp.com"
     const navigate=useNavigate();
     const formik = useFormik({
         initialValues: {
@@ -25,7 +26,7 @@ export default function Otppage()
         values.email=window.localStorage.getItem('otpemail')
         values.password=window.localStorage.getItem('otppassword')
         console.log("valuessss",values)
-        fetch('http://localhost:1000/otpverification',{
+        fetch(`${BE_HOST}/otpverification`,{
             method:"POST",
             body:JSON.stringify(values),
             headers:{
@@ -44,7 +45,7 @@ export default function Otppage()
             }
             else if(data.errors)
             {
-              alert("Invalied Details")
+              alert("Invalid Details")
             }
             else
             {
@@ -67,7 +68,7 @@ export default function Otppage()
           <div style={{ color: 'red' }}>{formik.errors.otp}</div>
         ) : null}
           <br/>
-          <button type='submit' className="btn btn-primary">Verify OTP</button><br/>
+          <button type='submit' className="btn btn-primary" style={{marginLeft:'150px',padding:'10px',fontSize:'25px',width:'150px'}}>Verify OTP</button><br/>
           </form>
         </div>
     )

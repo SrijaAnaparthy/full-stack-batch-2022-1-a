@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 
 export default function Signup()
-{    //const [flag,setflag]=React.useState(0);
-
+{    
+  const BE_HOST= "https://breakthepriceapp-backend.herokuapp.com"
+   const [clean,setclean] = useState("");
+    const navigate = useNavigate();
     const formik = useFormik({
         initialValues: {
           firstname: '',
@@ -52,7 +54,7 @@ export default function Signup()
 
             console.log(firstname,lastname,email,password,phno);
 
-            fetch('http://localhost:1000/signup',{
+            fetch(`${BE_HOST}/signup`,{
                 method:"POST",
                 body:JSON.stringify({firstname,lastname,email,password,phno}),
                 headers:{
@@ -62,6 +64,8 @@ export default function Signup()
                 if(data.message==="success")
                 {
                     alert("User created successfully")
+                    setclean("");
+                    navigate('/');
                 }
                 else
                 {
@@ -156,7 +160,7 @@ export default function Signup()
           <div style={{ color: 'red' }}>{formik.errors.confirmpassword}</div>
         ) : null}
 
-        <button className="btn btn-primary mt-3" type="submit">
+        <button className="btn btn-primary mt-3" type="submit" style={{marginLeft:'150px',padding:'10px',fontSize:'25px',width:'150px'}}>
           Submit
         </button><br/>
         <div>

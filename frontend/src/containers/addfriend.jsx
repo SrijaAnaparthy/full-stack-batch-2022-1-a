@@ -43,7 +43,7 @@ function AddFriend(props)
 
     return(<div>
         
-           <div>
+           <div className="card m-5 p-5 mx-auto sh" style={{ width: '600px' }}>
                <h1>Data</h1>
                   
                

@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from "react";
 import {useDispatch} from 'react-redux';
-import { getexpense,transaction} from "../actions/actions"
+import { getexpense,transaction,settlemoney} from "../actions/actions"
 import {connect} from 'react-redux'
 import {Table,Button} from 'react-bootstrap'
 import Modal from "react-modal";
@@ -14,23 +14,18 @@ function Transactions(props)
         //dispatch(addfriend())
      },[dispatch])
 
-     
-    
-    
-    // console.log(props,"props")
+   //  const [exp,setexp] = useState();
           const users = props.users;
-        // console.log("users",users);
+        console.log("users",users);
 
     const mydata = users.expense;
-   // console.log(mydata,"mydata");
+    console.log(mydata,"mydata");
 
     const tdata = users.tdata;
-    console.log(tdata);
+    console.log(tdata,"transaction data printed");
 
     const [display,setdisplay] = useState();
     const [d,setd] = useState(false);
-
-   // const tdetails = 
 
      function openModal(mydata)
      {
@@ -53,10 +48,17 @@ function Transactions(props)
      dispatch(transaction(id))
     }
 
-    // function transactiondata()
+    // function getexpid(expid)
     // {
-
+    //   //console.log(expid,"exp id");
+    //    setexp(expid);
     // }
+
+    function settleamount(exp,memberid)
+    {
+      console.log(exp,memberid,"expense id")
+      dispatch(settlemoney(exp,memberid))
+    }
 
     return(<div>
 
@@ -80,7 +82,7 @@ return(
       <td>{loguser}</td>
       <td>{user.description}</td>
       <td>{user.amount}</td>
-      <td><Button   onClick={() => {handlefunc(user.id); openModal(tdata)}} >Transaction Details</Button></td>
+      <td><Button   onClick={() => {handlefunc(user.id); openModal(tdata);}} >Transaction Details</Button></td>
     </tr>
      )
     }
@@ -122,10 +124,10 @@ return(
         <td>{++i}</td>
         <td>{user.owedperson}</td>
         <td>{user.description}</td>
-        <td>{user.divamount}</td>
+        <td style={{textDecoration:user.settleamount===true? "line-through" : "none"}}>{user.divamount}</td>
         <td>{user.createdat}</td>
         <td>{user.grpid ? user.grpid : 'not a group member'}</td>
-        <td><Button >Settle Amount</Button></td>
+        <td><Button onClick={()=> settleamount(user.expenseid,user.memberid)} disabled={user.settleamount===true? true:false}>Settle Amount</Button></td>
       </tr>
        )
       }

@@ -9,7 +9,8 @@ const intialState =
   grpmem : [],
   payments : [],
   rec : [],
-  tdata : []
+  tdata : [],
+  bool : []
 }
 
 export const Reducer = (state = intialState, { type, payload }) => {
@@ -64,6 +65,8 @@ export const Reducer = (state = intialState, { type, payload }) => {
         return {msg : [...payload]}
     case ActionTypes.CHECKVERIFICATION:
         return {otp : [...payload]}
+    case ActionTypes: SETTLEMONEY:
+        return {...state,bool : [...payload]}
     default:
       return state
   }

@@ -1,9 +1,10 @@
 //import { ActionTypes } from "../constants/action-types";
+const BE_HOST= "https://breakthepriceapp-backend.herokuapp.com"
 
 export function getusers() {
     return(dispatch)=>
     {
-        fetch("http://localhost:1000/users")
+        fetch(`${BE_HOST}/users`)
         .then((res)=>res.json())
         .then((data)=>
         {
@@ -25,7 +26,7 @@ export function addfriend(mail) {
     }
     return(dispatch)=>
     {
-        fetch("http://localhost:1000/addfriend",
+        fetch(`${BE_HOST}/addfriend`,
         {
             method: "POST",
             body: JSON.stringify(obj),
@@ -52,7 +53,7 @@ export function getfriends() {
     var id = window.localStorage.getItem("userid");
     return(dispatch)=>
     {
-      fetch("http://localhost:1000/friends/"+id,
+      fetch(`${BE_HOST}/friends/`+id,
       {
         method : 'GET',
         headers :
@@ -79,7 +80,7 @@ export function getfriends() {
         var obj ={
             ...values,createdby:user_id
         }
-        fetch("http://localhost:1000/addexpense",{
+        fetch(`${BE_HOST}/addexpense`,{
             method : 'POST',
             body: JSON.stringify(obj),
             headers: {
@@ -104,7 +105,7 @@ export function getfriends() {
     return(dispatch)=>
     {
         var id = window.localStorage.getItem("userid")
-        fetch("http://localhost:1000/userspends/"+id,
+        fetch(`${BE_HOST}/userspends/`+id,
         {
             method : 'GET',
             headers :
@@ -127,7 +128,7 @@ export function getuserdata(expid)
     var id = window.localStorage.getItem("userid");
     return(dispatch) =>
     {
-        fetch(`http://localhost:1000/getuserdata/${id}/${expid}`,
+        fetch(`${BE_HOST}/getuserdata/${id}/${expid}`,
         {
             method: "GET",
             headers: {
@@ -152,7 +153,7 @@ export function creategroup(values) {
         var obj ={
             ...values,createdby:user_id,
         }
-        fetch("http://localhost:1000/creategroup",{
+        fetch(`${BE_HOST}/creategroup`,{
             method : 'POST',
             body: JSON.stringify(obj),
             headers: {
@@ -178,7 +179,7 @@ export function creategroup(values) {
       var id = window.localStorage.getItem("userid")
     return(dispatch)=>
     {
-        fetch("http://localhost:1000/payments/"+id,
+        fetch(`${BE_HOST}/payments/`+id,
         {
             method : 'GET',
             headers :
@@ -201,7 +202,7 @@ export function groupdetails() {
     var id = window.localStorage.getItem("userid");
     return(dispatch)=>
     {
-      fetch("http://localhost:1000/groupdetails/"+id,
+      fetch(`${BE_HOST}/groupdetails/`+id,
       {
         method : 'GET',
         headers :
@@ -226,7 +227,7 @@ export function getgrpmem(grpid)
     var id = window.localStorage.getItem("userid");
     return(dispatch) =>
     {
-        fetch(`http://localhost:1000/getgrpmem/${id}/${grpid}`,
+        fetch(`${BE_HOST}/getgrpmem/${id}/${grpid}`,
         {
             method: "GET",
             headers: {
@@ -251,7 +252,7 @@ export function addgrpexpense(values,grpid) {
         var obj ={
             ...values,createdby:user_id,grpid : grpid
         }
-        fetch("http://localhost:1000/addgrpexpense",{
+        fetch(`${BE_HOST}/addgrpexpense`,{
             method : 'POST',
             body: JSON.stringify(obj),
             headers: {
@@ -276,7 +277,7 @@ export function showactivity() {
     var id = window.localStorage.getItem("userid")
     return(dispatch)=>
     {
-      fetch("http://localhost:1000/showactivity/"+id,
+      fetch(`${BE_HOST}/showactivity/`+id,
       {
         method : 'GET',
         headers :
@@ -300,7 +301,7 @@ export function transaction(expid)
     var id = window.localStorage.getItem("userid");
     return(dispatch) =>
     {
-        fetch(`http://localhost:1000/transaction/${id}/${expid}`,
+        fetch(`${BE_HOST}/transaction/${id}/${expid}`,
         {
             method: "GET",
             headers: {
@@ -321,7 +322,7 @@ export function transaction(expid)
 export function sendverification(mobileno) {
     return(dispatch)=>
     {
-        fetch("http://localhost:1000/send-verification-otp",{
+        fetch(`${BE_HOST}/send-verification-otp`,{
             method : 'POST',
             body: JSON.stringify(mobileno),
         })
@@ -344,7 +345,7 @@ export function checkverification(mobileno,code) {
         {
             mobileno,code
         }
-        fetch("http://localhost:1000//verify-otp",{
+        fetch(`${BE_HOST}/verify-otp`,{
             method : 'POST',
             body: JSON.stringify(obj),
         })
@@ -354,6 +355,40 @@ export function checkverification(mobileno,code) {
             if(data.message === 'success')
             {
                 dispatch({type:'CHECKVERIFICATION',payload:data})
+            }
+        })
+    }
+}
+
+
+export function settlemoney(exp,memberid) {
+    console.log("settle amount called",exp,memberid)
+    var id = window.localStorage.getItem("userid");
+    return(dispatch)=>
+    {
+        var obj ={
+           userid : id,
+           memid : memberid,
+           expid : exp
+        }
+        fetch(`${BE_HOST}/settlemoney`,{
+            method : 'POST',
+            body: JSON.stringify(obj),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                'mode': 'no-cors',
+            }
+        })
+        .then((result)=>result.json())
+        .then((data)=>
+        {
+            console.log(data,"add expense data")
+            if(data.message === 'success')
+            {
+                dispatch({type:'SETTLEMONEY',payload:data})
+                dispatch(transaction(exp))
+                alert("Payment done!!")
             }
         })
     }

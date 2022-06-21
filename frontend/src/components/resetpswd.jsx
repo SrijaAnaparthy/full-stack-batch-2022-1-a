@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 
 export default function Resetpassword()
 {
+  const BE_HOST= "https://breakthepriceapp-backend.herokuapp.com"
     const formik = useFormik({
         initialValues: {
           password:'',
@@ -35,7 +36,7 @@ export default function Resetpassword()
               password:values.password
             }
 
-              fetch("http://localhost:1000/user/resetpassword",{
+              fetch(`${BE_HOST}/resetpassword`,{
                 method:"POST",
                 body:JSON.stringify(obj),
                 headers:{
@@ -47,7 +48,7 @@ export default function Resetpassword()
                   if(data.message === "success")
                   {
                        alert("Password reset Successful")
-                       window.location='./'
+                       window.location='./login'
                   }
                   else
                   {
@@ -58,16 +59,16 @@ export default function Resetpassword()
        
     return(
         <div>
-            <div>
+            <div className="card m-5 p-5 mx-auto sh" style={{ width: '600px' }}>
 
             <h3>Reset Password</h3><br/>
 
             <form onSubmit={formik.handleSubmit}>
-            <label>
+            <label className="form-label">
             Enter Your New password
             </label>
 
-            <input id="password" type='password'
+            <input id="password" type='password' className="form-control"
                {...formik.getFieldProps('password')}
             ></input>
 
@@ -76,11 +77,11 @@ export default function Resetpassword()
         ) : null}
           <br/>
 
-          <label>
+          <label className='form-label'>
           Confirm password
         </label>
         
-            <input id="confirmpassword" type='password'
+            <input id="confirmpassword" type='password' className="form-control"
                {...formik.getFieldProps('confirmpassword')}
                 ></input>
 
@@ -89,7 +90,7 @@ export default function Resetpassword()
         ) : null}
           <br/>
 
-          <button type="submit">Reset</button>
+          <button type="submit" className="btn btn-primary mt-3" style={{marginLeft:'150px',padding:'10px',fontSize:'25px',width:'150px'}}>Reset</button>
 
           </form>
           </div>

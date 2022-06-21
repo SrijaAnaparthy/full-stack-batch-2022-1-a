@@ -5,6 +5,8 @@ import {Link,useNavigate} from 'react-router-dom'
 
 export default function Login()
 {
+
+  const BE_HOST= "https://breakthepriceapp-backend.herokuapp.com"
   const navigate = useNavigate();
     const formik = useFormik({
         initialValues: {
@@ -28,7 +30,7 @@ export default function Login()
       {
         window.localStorage.setItem('otpemail',values.email)
         window.localStorage.setItem('otpcode',values.password)
-        fetch('http://localhost:1000/login',{
+        fetch(`${BE_HOST}/login`,{
             method:"POST",
             body:JSON.stringify(values),
             headers:{

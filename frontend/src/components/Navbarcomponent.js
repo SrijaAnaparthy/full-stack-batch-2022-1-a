@@ -9,7 +9,7 @@ import GroupExpenseForm from '../containers/groupexpenseform'
 import ForgetPassword from './forgetpswd'
 import Friendslist from '../containers/friendslist'
 import Userslist from '../containers/userslist'
-import MyExpenses from '../containers/myexpenses'
+// import MyExpenses from '../containers/myexpenses'
 import Payments from '../containers/payments'
 import AddFriend from '../containers/addfriend'
 import {BrowserRouter,Route,Routes} from 'react-router-dom'
@@ -21,9 +21,10 @@ import UserDetails from '../containers/userdetails'
 import AskingForm from '../containers/askingform'
 import ActivityRec from '../containers/activityrec'
 import OtpVerification from '../components/otpverification'
+import Resetpassword from './resetpswd'
 
 function NavbarComponent() {
-  var loguser = window.localStorage.getItem("loginuser")
+  var loguser = window.localStorage.getItem("username")
 
 
   //const navigate = useNavigate();
@@ -42,7 +43,7 @@ function NavbarComponent() {
     <div>
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
   <Container>
-  <Navbar.Brand href="#">Dashboard</Navbar.Brand>
+  <Navbar.Brand href="#">BreakPriceApp</Navbar.Brand>
   <Navbar.Toggle aria-controls="responsive-navbar-nav" />
   <Navbar.Collapse id="responsive-navbar-nav">
     <Nav className="me-auto">
@@ -60,8 +61,6 @@ function NavbarComponent() {
                   <Nav.Link as={Link} to={"/friendslist"}>FriendsList</Nav.Link>
                   <Nav.Link as={Link} to={'/addfriend'}>Add Friend</Nav.Link>
                   <Nav.Link as={Link} to={'/askingform'}>Add Expense</Nav.Link>
-                  <Nav.Link as={Link} to={'/myexpense'}>My Expenses</Nav.Link>
-                  <Nav.Link as={Link}to={'/payments'}>Payments</Nav.Link>
                   <Nav>
       {/* <Nav.Link as={Link} to={'#'}>{loguser}</Nav.Link> */}
       <NavDropdown title={loguser} className="bg-dark">
@@ -69,6 +68,9 @@ function NavbarComponent() {
                   localStorage.removeItem('token')
                   localStorage.removeItem('loginuser')
                   localStorage.removeItem('userid')
+                  localStorage.removeItem('username')
+                  localStorage.removeItem('otpcode')
+                  localStorage.removeItem('otpemail');
                   window.location.reload ()
                 //navigate('/signup')
                 }}><Nav.Link as={Link} to={'/login'}>Logout</Nav.Link>
@@ -89,16 +91,16 @@ function NavbarComponent() {
 
 <div>
           <Routes>
+            <Route path='/' element={<Login/>}></Route>
             <Route path="/home" element={loguser ? <Home/> : <Login/>}></Route>
             <Route path='/forgetpswd' element={<ForgetPassword/>}></Route>
             <Route path="/friendslist" element={<Friendslist/>}></Route>
             <Route path="/userslist" element={<Userslist/>}></Route>
             <Route path="/addfriend" element={<AddFriend/>}></Route>
             <Route path="/askingform" element={<AskingForm/>}></Route>
-            <Route path="/myexpense" element={<MyExpenses/>}></Route>
-            <Route path="/payments" element={<Payments/>}></Route>
             <Route path='/signup' element={<Signup/>}></Route>
             <Route path="/login" element={<Login/>}></Route>
+            <Route path="/resetpswd" element={<Resetpassword/>}></Route>
             <Route path="/logout" element={<Login/>}></Route>
             <Route path="/userdetails" element={<UserDetails/>}></Route>
             <Route path="/groups" element={<Groups/>}></Route>
@@ -108,6 +110,8 @@ function NavbarComponent() {
             <Route path="/transactions" element={<Transactions/>}></Route>
             <Route path="/activity" element={<ActivityRec/>}></Route>
             <Route path="/otpverification" element={<OtpVerification/>}></Route>
+            <Route path="/account" element={<Account/>}></Route>
+            <Route path="/payments" element={<Payments/>}></Route>
           </Routes>
 </div>
     </div>
