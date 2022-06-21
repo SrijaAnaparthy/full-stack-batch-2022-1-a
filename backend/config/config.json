@@ -15,9 +15,9 @@
   },
   "production": {
     "username": "postgres",
-    "password": "123",
-    "database": "breaktheprice",
-    "host": "127.0.0.1",
+    "password": "batch1$",
+    "database": "srija_breakthepriceapp",
+    "host": "64.225.6.89",
     "dialect": "postgres"
   }
 }
