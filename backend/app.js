@@ -22,6 +22,12 @@ const authToken = "f9c7ef220293925b6a0d242ea49a95ce";
 const client = require('twilio')(accountSid, authToken);
 const serviceId = 'VAfef16cf9b0334baead4d36320020a6d1';
 
+
+app.get('/',async(req,res)=>
+{
+    res.send("hello app")
+})
+
 //Signup users data added to Users table
 app.post('/signup', async(req,res)=>{
     const hashPassword=bcrypt.hashSync(req.body.password,5);
@@ -38,7 +44,7 @@ app.post('/signup', async(req,res)=>{
 
     try{ 
         const user=await User.create(data)
-
+        console.log(user,"ttt")
         return res.json({user:user,message:"success"})
       }
     catch(err)
@@ -50,6 +56,7 @@ app.post('/signup', async(req,res)=>{
 
 //Login users check with reg users through their mail-ids
 app.post("/login" ,async(req,res)=>{
+    console.log(req.body,"rquest body")
     try{
         const user=await User.findOne({
             where: 
@@ -57,37 +64,40 @@ app.post("/login" ,async(req,res)=>{
               email:req.body.email, 
             }
           })
-
-          if(!user)
+          .then((user)=>
           {
-              res.json({message:'Not a valid user'})
+            console.log(user.dataValues)
+            if(!user)
+            {
+                res.json({message:'Not a valid user'})
+            }
+  
+            else
+            {
+                let userpassword=user.dataValues.password;
+  
+                const isUserPassword = bcrypt.compareSync(req.body.password,userpassword);
+  
+                if(isUserPassword)
+                {
+  
+                    //res.send({token:token,msg:"success",email:req.body.email,id:user.id})
+                    client.verify.services(serviceId)
+                    .verifications
+                    .create({to: "+91" + user.dataValues.phno, channel: 'sms'})
+                    .then((data) => 
+                       {
+                          return res.status(200).json({message : "success",data});
+                       })
+                    .catch((err)=>res.send(err))
+                }
+  
+                else
+                {
+                    res.json({message:"Invalid Password"})
+                }
           }
-
-          else
-          {
-              let userpassword=user.dataValues.password;
-
-              const isUserPassword = bcrypt.compareSync(req.body.password,userpassword);
-
-              if(isUserPassword)
-              {
-
-                  //res.send({token:token,msg:"success",email:req.body.email,id:user.id})
-                  client.verify.services(serviceId)
-                  .verifications
-                  .create({to: '+91' + user.dataValues.phno, channel: 'sms'})
-                  .then(data => 
-                     {
-                        return res.status(200).json({message : "success",data});
-                     })
-                     .catch((err)=>res.send(err))
-              }
-
-              else
-              {
-                  res.json({message:"Invalid Password"})
-              }
-        }
+          })
     }
     catch
     {
@@ -97,6 +107,7 @@ app.post("/login" ,async(req,res)=>{
 
 app.post('/otpverification',async(req,res)=>
 {
+    
     try
     {
         const user = await User.findOne({
@@ -105,6 +116,7 @@ app.post('/otpverification',async(req,res)=>
                 email : req.body.email,
             }
         })
+        console.log(user,"userrrr")
         if(!user)
         {
             res.json({message : 'User not found'})
@@ -115,12 +127,15 @@ app.post('/otpverification',async(req,res)=>
                   
             const token=jwt.sign(data,"Itsmy_secret_token")
 
+            console.log(token,"token")
             client.verify.services(serviceId)
             .verificationChecks
-            .create({to: '+91' + user.dataValues.phno, 
+            .create({
+            to: "+91"+user.dataValues.phno, 
             code: req.body.otp })
             .then(dataa => 
                 {
+                    console.log(dataa,"dataa") 
                     if(dataa.valid)
                     {
                         res.json({token : token,msg : "Success", email : req.body.email,id : user.id,username : user.firstname,otpres : dataa})
@@ -177,13 +192,16 @@ app.get('/users/:id',async(req,res) =>
 
 //check existing user mail to reset password 
 app.post('/usertest',async(req,res)=>{
+    const email = req.body.email;
     try{   
           const user=await User.findOne({
             where: {
-              email:req.body.email, 
+              email :  email
             }
           })
+        //const user = db.sequelize.query(`select email from users where email=${req.body.email}`)
 
+          console.log(user,"statsss")
           if(!user)
           {      
                  res.json({message:"User not found"})
@@ -348,7 +366,7 @@ app.post("/addfriend",tokenverification,async(req,res)=>{
         // console.log("user",user)
         const frnd = await UFriend.create({fid:friend.id,userid:user.id})
         const activity = {
-            taskname : "Added a New Friend",
+            taskname : friend.firstname + " " + friend.lastname + " added as a friend",
             date : new Date(),
             createdby : createdby
         }
@@ -419,7 +437,7 @@ app.post("/addexpense",tokenverification,async(req,res)=>{
                   var exmem=ExpenseMember.create(expensememdata)
                 }
                 const activity = {
-                    taskname : "Expense added successfully - friends",
+                    taskname : req.body.description + " Expense added",
                     date : new Date(),
                     createdby : req.body.createdby
                 }
@@ -500,14 +518,14 @@ app.post("/creategroup",tokenverification,async(req,res)=>{
               var grpmem = GroupMember.create(grpdata)
             }
             const activity = {
-                taskname : "Group creation done",
+                taskname : req.body.grpname + " group created",
                 date : new Date(),
                 createdby : req.body.createdby
             }
            const resultt = ActivityRecord.create(activity);
            console.log(resultt,"activity record")
             return res.json({
-                message:"successfully created group", grpmem: grpdata,
+                message:"success", grpmem: grpdata,
             })
         }     
     }     
@@ -583,7 +601,7 @@ app.post("/addgrpexpense",tokenverification,async(req,res)=>{
               var exmem=ExpenseMember.create(expensememdata)
             }
             const activity = {
-                taskname : "Group expense created for group",
+                taskname : req.body.description + " Group expense added",
                 date : new Date(),
                 createdby : req.body.createdby
             }
@@ -604,8 +622,9 @@ app.get('/transaction/:id/:expid',async(req,res)=>
 {
     try
     {
+
         const {expid,id} = req.params;
-        db.sequelize.query(`select u.firstname as owedperson,k.firstname as investedby,k.divamount,k.amount as totalamount,k.description,k.createdat,k.grpid from users u inner join (select u.firstname,e.description,em.divamount,e.amount,em.memberid as owed,e."createdAt" as createdat,em.grpid from users u inner join expenses e on u.id=e.createdby inner join expensemembers em on e.id=em.expenseid and e.id=${req.params.expid})k on u.id=k.owed;`)
+        db.sequelize.query(`select u.firstname as owedperson,k.firstname as investedby,k.divamount,k.memberid,k.amount as totalamount,k.description,k.createdat,k.expenseid,k.grpid,k.settleamount from users u inner join (select u.firstname,e.description,em.divamount,em.expenseid,em.memberid,em.settleamount,e.amount,em.memberid as owed,e."createdAt" as createdat,em.grpid from users u inner join expenses e on u.id=e.createdby inner join expensemembers em on e.id=em.expenseid and e.id=${req.params.expid})k on u.id=k.owed;`)
         .then((data) => {
             console.log(data,"response")
             res.json(data)
@@ -632,7 +651,74 @@ app.get('/showactivity/:id',async(req,res)=>{
     }
 })
 
-app.listen({port : 1000}, async() =>
+app.post('/settlemoney',tokenverification,async(req,res)=>
+{
+//     try
+//     {
+//         const setamount = await ExpenseMember.update({settleamount : true},
+//             {
+//                 where : {memberid : req.body.memid,
+//                 expenseid : req.body.expid}
+//             })
+//         if(setamount)
+//         {
+//         const activity = {
+//             taskname : "Payment Cleared!",
+//             date : new Date(),
+//             createdby : req.body.userid
+//         }
+//         console.log(activity,"actv")
+//         const actv = ActivityRecord.create(activity)
+//         if(actv)
+//         {
+//             res.json({message : "success"})
+//         }
+//         else
+//         {
+//             res.json({message : "transaction failed"})
+//         }
+
+//     }
+// }
+// catch(err)
+// {
+//     res.json({message:err})
+// }
+    try
+    {
+        const settle = db.sequelize.query(`update expensemembers set settleamount=true where expenseid=${req.body.expid} and memberid=${req.body.memid}`)
+        .then((data)=>
+        {
+            console.log(data,"data from settle")
+            const activity = {
+                taskname : "Payment Cleared!",
+                date : new Date(),
+                createdby : req.body.userid
+            }
+            console.log(activity,"actv")
+            const actv = ActivityRecord.create(activity)
+            if(actv)
+            {
+                res.json({message : "success"})
+            }
+            else
+            {
+                res.json({message : "transaction failed"})
+            }
+        })
+        .catch((err)=>
+        {
+            console.log(err,"error occurred in settle up amount")
+        })
+    }
+    catch(err)
+    {
+        res.json({message:err})
+    }
+})
+
+const PORT = 1000;
+app.listen(process.env.PORT || PORT , async() =>
 {
     console.log("server running on http://localhost:1000")
     await sequelize.authenticate()
